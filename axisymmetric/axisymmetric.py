@@ -7,10 +7,10 @@
 # symmetry. Uses interpolation on the sphere S^2 with a linear
 # combination of translates of a single strictly positive definite
 # basis function. The interpolation scheme is based on the "generating
-# function kernel" in: 
+# function kernel" in:
 #
 # Jetter K, Stoeckler J, Ward JD, Math. Computation 1999, 68, 733-747.
-# 
+#
 # Works with FDTD runs using x-propagating, z-polarized plane
 # waves. It is assumed that the particle's axis of rotational symmetry
 # is the z-axis when the quaternion is (0,0,0,1).
@@ -24,19 +24,19 @@
 #
 # CONTROL FILE: text file with a header, choice of interpolation
 # parameters, and body.
-# 
+#
 # HEADER: define the job type and related parameters. Choices
 # currently are orientation-averaged spectrum ("o"), fixed orientation
 # spectrum ("f"), or polar view of cross section as particle is
 # rotated ("p"). Put one of the following at the top of the control
 # file:
-# 
+#
 # Orientation-averaged spectrum:
 # o                          <- Job type
 #
 # Fixed orientation spectrum:
 # f                          <- Job type
-# 0.0 0.38268 0.0 0.92388    <- Unit quaternion (x,y,z,w) defining desired 
+# 0.0 0.38268 0.0 0.92388    <- Unit quaternion (x,y,z,w) defining desired
 #                               orientation
 # Polar view:
 # p                          <- Job type
@@ -51,7 +51,7 @@
 #
 # CHOICE OF INTERPOLATION PARAMETERS: Put the following next in the
 # control file:
-# 
+#
 # 0.3                        <- Peakedness z of the kernel (0 < z < 1)
 # dinfh                      <- Point group of nanoparticle
 #
@@ -68,7 +68,7 @@
 # spectrum, and the last two are whether reflection in the xy and xz
 # planes, respectively, give a different but valid orientation with an
 # identical spectrum.
-# 
+#
 #
 # DATA FILES:
 # The data files must be lists of wavelength or frequency followed by the
@@ -78,7 +78,7 @@
 #
 # The list of wavelengths sampled must be identical between files.
 #
-# 
+#
 # Raman Shah, April-August 2010
 
 
@@ -104,7 +104,7 @@ def readlist():
         line = raw_input().replace(',', ' ').split()
         if line != []:
             return line
-    
+
 
 # QUATERNION CLASS AND RELATED METHODS
 
@@ -119,7 +119,7 @@ class quaternion:
         self.y = ypart / norm
         self.z = zpart / norm
         self.w = wpart / norm
-    
+
     def invert(self):
         # Quaternion for the inverse rotation has same axis
         # but opposite angle, so the vector components flip sign
@@ -168,7 +168,7 @@ def cinfv_symadapt(input_tuple):
     return [input_tuple]
 
 def dinfh_symadapt(input_tuple):
-    # Takes a 2-tuple (quaternion + filename) and returns a 
+    # Takes a 2-tuple (quaternion + filename) and returns a
     # list of the 2 tuples equivalent to the given tuple via the discrete
     # subgroup of D_infh.
     # Right-handed rotation by pi about the x axis
@@ -225,13 +225,13 @@ if not ((z > 0) and (z < 1)):
 point_group = readlist()[0]
 interpolator, integral = choose_interpolator(z)
 rot_adapt = choose_point_group(point_group)
-    
-# Parse input from body of control file into a control array with 
-# entries [quaternion, string, boolean, boolean]. Also create a 
+
+# Parse input from body of control file into a control array with
+# entries [quaternion, string, boolean, boolean]. Also create a
 # dictionary of open data files to read later in program.
 control_list = []
 datafile_dict = {}
-while True: 
+while True:
     try:
         words = readlist()
         curr_quat = quaternion(float(words[0]), float(words[1]), \
@@ -251,7 +251,7 @@ while True:
 reflected_list = []
 for item in control_list:
     reflected_list.append((item[0], item[1]))
-    if (item[2] and item[3]): 
+    if (item[2] and item[3]):
         #xy and xz both give new equivalent configurations
         reflected_list.append((item[0].xyreflect(), item[1]))
         reflected_list.append((item[0].xzreflect(), item[1]))
@@ -331,7 +331,7 @@ if job_type in ['o', 'f']:
         for j in range(dimension):
             eval_row[0,j] = interpolator(dot(point(orientation), \
                                              point(main_quat_list[j])))
-                    
+
     while True: # Loop runs until a blank line is seen in data file
         # Initialize the iteration
         cs_vector = np.matrix(np.zeros((dimension, 1)))
@@ -367,15 +367,15 @@ if job_type == 'p':
     while True:
         curr_line_dict = {}
 
-        # Read a new line, parsed into floats, to give a dictionary        
+        # Read a new line, parsed into floats, to give a dictionary
         for filename in datafile_dict:
             curr_line_dict[filename] = \
                 map(float, datafile_dict[filename].readline().split())
-        
+
         if curr_line_dict.values()[0] == []:
             raise IOError('Wavelength/frequency ' + \
                               str(wavelength) + ' not found!')
-        
+
         curr_wavelength = float(curr_line_dict.values()[0][0])
 
         if abs(curr_wavelength - wavelength) < wavelength_tol:
@@ -389,7 +389,7 @@ if job_type == 'p':
         cs_vector[i] = curr_line_dict[main_filename_list[i]][1]
 
     coef_vector = Ainv * cs_vector
-    
+
     angle_list = np.linspace(0, 2*pi, stepcount, True)
 
     # Main loop
@@ -405,7 +405,7 @@ if job_type == 'p':
             eval_row[0,j] = interpolator(dot(point(curr_quat), \
                                              point(main_quat_list[j])))
         print angle, (eval_row * coef_vector)[0,0]
-        
+
 
 # FINAL I/O CLEANUP
 

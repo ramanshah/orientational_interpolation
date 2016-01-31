@@ -8,7 +8,7 @@
 # definite basis function. The basis functions used have closed form values
 # for their Haar integrals over SO(3). The interpolation scheme is based on
 # Filbir F, Schmid D, J. Approx. Theory 2008, 153, 170-183.
-# 
+#
 #
 # Works with FDTD runs using x-propagating, z-polarized plane waves.
 #
@@ -21,18 +21,18 @@
 #
 # CONTROL FILE: text file with a header, choice of interpolator and point
 # group, and body.
-# 
+#
 # HEADER: define the job type and parameters. Choices currently are
 # orientation-averaged spectrum ("o"), fixed orientation spectrum ("f"),
 # or polar view of cross section as particle is rotated ("p"). Put one of
 # the following at the top of the control file:
-# 
+#
 # Orientation-averaged spectrum:
 # o                          <- Job type
 #
 # Fixed orientation spectrum:
 # f                          <- Job type
-# 0.0 0.0 0.0 1.0            <- Unit quaternion (x,y,z,w) defining desired 
+# 0.0 0.0 0.0 1.0            <- Unit quaternion (x,y,z,w) defining desired
 #                               orientation
 #
 # Polar view:
@@ -48,7 +48,7 @@
 #
 # CHOICE OF INTERPOLATOR AND POINT GROUP: Put the following next in the
 # control file:
-# 
+#
 # symm_interp                <- Family of interpolator to use
 # 4                          <- Degree of interpolator in family
 # d5                         <- Rotational point group of nanoparticle
@@ -65,17 +65,17 @@
 # subdirectory as this program) of the corresponding spectrum, and the
 # last two are whether reflection in the xy and xz planes, respectively,
 # give a different but valid orientation with an identical spectrum.
-# 
+#
 #
 # DATA FILES:
 # The data files must be lists of wavelength or frequency followed by the
 # cross section, one entry per line, with no blank lines:
 #
-# 7.49481103E-07  551.72174    
+# 7.49481103E-07  551.72174
 #
 # The list of wavelengths sampled must be identical between files.
 #
-# 
+#
 # Raman Shah, April-May 2010
 #
 # Modified for minor bug fixes 8 Jun 2010, 20 Aug 2010
@@ -101,7 +101,7 @@ def readlist():
         line = raw_input().replace(',', ' ').split()
         if line != []:
             return line
-    
+
 
 # QUATERNION CLASS AND RELATED METHODS
 
@@ -116,7 +116,7 @@ class quaternion:
         self.y = ypart / norm
         self.z = zpart / norm
         self.w = wpart / norm
-    
+
     def invert(self):
         # Quaternion for the inverse rotation has same axis
         # but opposite angle, so the vector components flip sign
@@ -143,7 +143,7 @@ def multiply(quat1, quat2):
     return quaternion(prodx,prody,prodz,prodw)
 
 def chain_multiply(quat_list):
-    # Recursively multiplies an arbitrary list of quaternions, 
+    # Recursively multiplies an arbitrary list of quaternions,
     # returning a quaternion.
     # q1 * q2 * q3 * q4 evaluated as ((q1 * q2) * q3) * q4, etc.
     if len(quat_list) == 0:
@@ -155,13 +155,13 @@ def chain_multiply(quat_list):
     else:
         right_term = quat_list.pop()
         return multiply(chain_multiply(quat_list), right_term)
-       
+
 
 # FUNCTIONS FOR SYMMETRY ADAPTATION OF DATA SET
 
 def d5symadapt(input_tuple):
-    # Takes a 2-tuple (quaternion + filename) and returns a 
-    # list of the 10 tuples equivalent to the given tuple 
+    # Takes a 2-tuple (quaternion + filename) and returns a
+    # list of the 10 tuples equivalent to the given tuple
     # under D_5 symmetry (first output is the parent).
     # Right-handed rotation by 2pi/5 about the z axis
     c5 = quaternion(0, 0, sin(pi/5), cos(pi/5))
@@ -215,7 +215,7 @@ def choose_interpolator(int_choice, n):
                     1259743.0/67108864]
         return (interpolator, integral[n])
 
-    # Maybe a better choice? Symmetrically uses all three 
+    # Maybe a better choice? Symmetrically uses all three
     # functions phi_1,0,0, phi_0,1,0, phi_0,0,1 in the paper,
     # adds 2, and analogously normalizes to 1
     if int_choice == 'symm_interp':
@@ -267,13 +267,13 @@ n = int(readlist()[0])
 point_group = readlist()[0]
 interpolator, integral = choose_interpolator(int_choice, n)
 rot_adapt = choose_point_group(point_group)
-    
-# Parse input from body of control file into a control array with 
-# entries [quaternion, string, boolean, boolean]. Also create a 
+
+# Parse input from body of control file into a control array with
+# entries [quaternion, string, boolean, boolean]. Also create a
 # dictionary of open data files to read later in program.
 control_list = []
 datafile_dict = {}
-while True: 
+while True:
     try:
         words = readlist()
         curr_quat = quaternion(float(words[0]), float(words[1]), \
@@ -293,7 +293,7 @@ while True:
 reflected_list = []
 for item in control_list:
     reflected_list.append((item[0], item[1]))
-    if (item[2] and item[3]): 
+    if (item[2] and item[3]):
         #xy and xz both give new equivalent configurations
         reflected_list.append((item[0].xyreflect(), item[1]))
         reflected_list.append((item[0].xzreflect(), item[1]))
@@ -321,8 +321,8 @@ main_quat_list, main_filename_list = zip(*master_list)
 
 # NUMERICAL SECTION: FUNCTION EVALUATION AND MATRIX INVERSION
 
-# Instantiate array of quaternion arguments to be passed to the 
-# interpolator. This can also be used to look at the separation 
+# Instantiate array of quaternion arguments to be passed to the
+# interpolator. This can also be used to look at the separation
 # quality of the data set.
 # a_ij = q_j^-1 * q_i
 dimension = len(main_quat_list)
@@ -411,15 +411,15 @@ if job_type == 'p':
     while True:
         curr_line_dict = {}
 
-        # Read a new line, parsed into floats, to give a dictionary        
+        # Read a new line, parsed into floats, to give a dictionary
         for filename in datafile_dict:
             curr_line_dict[filename] = \
                 map(float, datafile_dict[filename].readline().split())
-        
+
         if curr_line_dict.values()[0] == []:
             raise IOError('Wavelength/frequency ' + \
                               str(wavelength) + ' not found!')
-        
+
         curr_wavelength = float(curr_line_dict.values()[0][0])
 
         if abs(curr_wavelength - wavelength) < wavelength_tol:
@@ -433,7 +433,7 @@ if job_type == 'p':
         cs_vector[i] = curr_line_dict[main_filename_list[i]][1]
 
     coef_vector = Ainv * cs_vector
-    
+
     angle_list = np.linspace(0, 2*pi, stepcount, True)
 
     # Main loop
@@ -448,9 +448,9 @@ if job_type == 'p':
         for j in range(dimension):
             eval_row[0,j] = interpolator(multiply(main_quat_list[j].invert(), \
                                                       curr_quat))
-            
+
         print angle, (eval_row * coef_vector)[0,0]
-        
+
 
 # FINAL I/O CLEANUP
 
