@@ -1,5 +1,7 @@
 # Orientational Interpolation
 
+*Currently validating this software in Python 2.7.11*
+
 This code implements (in Python 2, using NumPy) the orientational
 interpolation (OI) method described in the following paper:
 
