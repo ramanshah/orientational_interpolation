@@ -1,6 +1,6 @@
 # Orientational Interpolation
 
-*Currently validating this software in Python 2.7.11*
+*Currently validating this software in Python 2.7.11 and NumPy 1.11.0*
 
 This code implements (in Python 2, using NumPy) the orientational
 interpolation (OI) method described in the following paper:
@@ -23,14 +23,14 @@ publish.
 
 ## Not under active development
 
-This is a pretty spare proof of concept code covering the D_5 and
-D_infinity rotational point groups in the examples we showed in the
-above paper. It also reflects my programming practices in 2010 when I
-was a considerably less sophisticated programmer. Rather than attempt
-to refactor and expand this code, at the time of writing (2016) I'm
-hoping to build a Haskell implementation of OI that treats both the
-axisymmetric and nonaxisymmetric formalisms with a single program,
-covers all point groups, and generally offers more niceties.
+This is a pretty spare proof of concept code covering the D_5 and D_infinity
+rotational point groups in the examples we showed in the above paper. It also
+reflects my programming practices in 2010 when I was a considerably less
+sophisticated programmer. Rather than attempt to refactor and expand this code,
+at the time of writing (2016) I'm hoping to build a [Haskell implementation of
+OI](https://github.com/ramanshah/oi_haskell) that treats both the axisymmetric
+and nonaxisymmetric formalisms with a single program, covers all point groups,
+and generally offers more niceties.
 
 Of course, such goals are a moving target, and I'm willing to
 reconsider if you want to use OI for something cool. Keep in mind that
