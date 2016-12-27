@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!i /usr/bin/env python
 #
 # oravg.py - An engine to calculate orientation averaged cross sections
 # and orientation-dependent spectral information starting from several

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!i /usr/bin/env python
 #
 # oravg_s2.py - An engine, adapted from the original oravg.py, to
 # calculate orientation averaged cross sections and
