@@ -10,6 +10,9 @@ Interpolation of the Optical Spectra of Nonspherical
 Nanoparticles](http://dx.doi.org//10.1021/jp300621q). *J. Phys. Chem. C*,
 2012, 116(23), 12712-12724.
 
+(If you don't have a subscription to the above, you can read my
+[open access dissertation](http://gradworks.umi.com/36/38/3638691.html).
+
 While OI was developed to support a specific problem in the synthesis
 of metal nanoparticles, it's quite general. If you are studying a
 symmetric object and you're interested in an orientation-dependent
